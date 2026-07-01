@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ETS Attendance 2.0</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <h1>ETS Attendance 2.0</h1>
+
+  <div class="login-box">
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+    <span id="loginStatus"></span>
+  </div>
+
+  <div class="top-bar">
+
+    <div class="left-controls">
+      <input id="sasid" placeholder="SASID">
+      <input id="firstName" placeholder="First Name">
+      <input id="lastName" placeholder="Last Name">
+      <button onclick="addStudent()">Add Student</button>
+      <select id="weekSelect" onchange="loadAttendance()"></select>
+    </div>
+
+    <div class="right-controls">
+      <button onclick="exportWeekCSV()">Export Week CSV</button>
+    </div>
+
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Student Number</th>
+          <th>Student Name</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Total Present</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

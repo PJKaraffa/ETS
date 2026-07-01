@@ -1,0 +1,120 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 28px;
+}
+
+.app {
+  max-width: 1500px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  color: #1f3a5f;
+  font-size: 42px;
+}
+
+.login-box,
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.left-controls,
+.right-controls,
+.login-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+input,
+select,
+button {
+  height: 42px;
+  padding: 0 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #c8d0da;
+}
+
+button {
+  background: #1f6feb;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #174ea6;
+}
+
+.table-container {
+  max-height: 650px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.14);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(#1f6feb, #174ea6);
+  color: white;
+  padding: 13px;
+}
+
+td {
+  border: 1px solid #e1e5ea;
+  padding: 10px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background: #f5f9ff;
+}
+
+tbody tr:hover {
+  background: #dbeeff;
+}
+
+td:first-child,
+td:nth-child(2) {
+  text-align: left;
+}
+
+td:last-child {
+  background: #eef5ff;
+  font-weight: bold;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.date-text {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.empty {
+  text-align: center;
+  padding: 25px;
+  color: #666;
+  font-style: italic;
+}

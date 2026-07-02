@@ -50,7 +50,8 @@ async function addStudent() {
   const sasid = document.getElementById("sasid").value.trim();
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
-
+  const schoolId = document.getElementById("school").value;
+  
   if (sasid === "" || firstName === "" || lastName === "") {
     alert("Enter SASID, First Name, and Last Name.");
     return;
@@ -61,12 +62,13 @@ async function addStudent() {
   const { error } = await supabaseClient
     .from("students")
     .insert({
-      sasid: sasid,
-      first_name: firstName,
-      last_name: lastName,
-      student_name: fullName,
-      active: true
-    });
+    sasid: sasid,
+    first_name: firstName,
+    last_name: lastName,
+    student_name: fullName,
+    school_id: schoolId,
+    active: true
+});
 
   if (error) {
     alert(error.message);

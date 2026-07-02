@@ -45,6 +45,7 @@ async function logout() {
   attendanceRecords = [];
 
   document.getElementById("loginStatus").textContent = "Logged out";
+  document.getElementById("school").innerHTML = `<option value="">Select School</option>`;
 
   buildTable();
 }
@@ -63,44 +64,18 @@ async function checkUser() {
 async function loadSchools() {
   const schoolSelect = document.getElementById("school");
 
-  if (!schoolSelect) {
-    alert("Could not find the school dropdown. Check id='school' in index.html.");
-    return;
-  }
-
-  const { data: userData } = await supabaseClient.auth.getUser();
-
-  if (!userData.user) {
-    alert("You are not logged in. Log in first, then schools will load.");
-    return;
-  }
-
   const { data, error } = await supabaseClient
     .from("schools")
-    .select("id, school_name, active")
+    .select("id, school_name")
     .order("school_name");
 
   if (error) {
     alert("School load error: " + error.message);
-    console.log(error);
     return;
   }
 
-  console.log("Schools loaded:", data);
-
-  schoolSelect.innerHTML = `<option value="">Select School</option>`;
-
-  data.forEach(school => {
-    const option = document.createElement("option");
-    option.value = school.id;
-    option.textContent = school.school_name;
-    schoolSelect.appendChild(option);
-  });
-}
-
   schools = data || [];
 
-  const schoolSelect = document.getElementById("school");
   schoolSelect.innerHTML = `<option value="">Select School</option>`;
 
   schools.forEach(school => {
@@ -136,7 +111,7 @@ async function addStudent() {
     });
 
   if (error) {
-    alert(error.message);
+    alert("Student insert error: " + error.message);
     return;
   }
 
@@ -153,7 +128,13 @@ async function loadStudents() {
   const { data, error } = await supabaseClient
     .from("students")
     .select(`
-      *,
+      id,
+      sasid,
+      first_name,
+      last_name,
+      student_name,
+      school_id,
+      active,
       schools (
         school_name
       )
@@ -162,7 +143,7 @@ async function loadStudents() {
     .order("last_name");
 
   if (error) {
-    alert(error.message);
+    alert("Student load error: " + error.message);
     return;
   }
 
@@ -183,12 +164,11 @@ async function loadAttendance() {
     .lte("attendance_date", toISODate(weekEnd));
 
   if (error) {
-    alert(error.message);
+    alert("Attendance load error: " + error.message);
     return;
   }
 
   attendanceRecords = data || [];
-
   buildTable();
 }
 
@@ -262,7 +242,6 @@ function buildTable() {
 
       td.appendChild(checkbox);
       td.appendChild(dateDiv);
-
       tr.appendChild(td);
     });
 
@@ -290,7 +269,7 @@ async function saveAttendance(studentId, attendanceDate, code) {
       .eq("id", existing.id);
 
     if (error) {
-      alert(error.message);
+      alert("Attendance update error: " + error.message);
       return;
     }
   } else {
@@ -303,7 +282,7 @@ async function saveAttendance(studentId, attendanceDate, code) {
       });
 
     if (error) {
-      alert(error.message);
+      alert("Attendance insert error: " + error.message);
       return;
     }
   }
@@ -357,7 +336,6 @@ function exportWeekCSV() {
     });
 
     row.push(total);
-
     csv += row.map(x => `"${x}"`).join(",") + "\n";
   });
 

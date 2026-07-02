@@ -15,8 +15,8 @@
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
-    <button onclick="logout()">Logout</button>
-    <span id="loginStatus"></span>
+    <button onclick="logout()" class="gray">Logout</button>
+    <span id="loginStatus">Not logged in</span>
   </div>
 
   <div class="top-bar">
@@ -25,10 +25,13 @@
       <input id="sasid" placeholder="SASID">
       <input id="firstName" placeholder="First Name">
       <input id="lastName" placeholder="Last Name">
+
       <select id="school">
-      <option value="">Select School</option>
-     </select>
+        <option value="">Select School</option>
+      </select>
+
       <button onclick="addStudent()">Add Student</button>
+
       <select id="weekSelect" onchange="loadAttendance()"></select>
     </div>
 
@@ -42,8 +45,9 @@
     <table>
       <thead>
         <tr>
-          <th>Student Number</th>
+          <th>SASID</th>
           <th>Student Name</th>
+          <th>School</th>
           <th>Monday</th>
           <th>Tuesday</th>
           <th>Wednesday</th>
@@ -52,6 +56,7 @@
           <th>Total Present</th>
         </tr>
       </thead>
+
       <tbody id="attendanceBody"></tbody>
     </table>
   </div>

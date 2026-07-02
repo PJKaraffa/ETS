@@ -3,6 +3,7 @@ body {
   background: #f4f6f8;
   margin: 0;
   padding: 28px;
+  color: #111827;
 }
 
 .app {
@@ -14,6 +15,7 @@ h1 {
   text-align: center;
   color: #1f3a5f;
   font-size: 42px;
+  margin-bottom: 25px;
 }
 
 .login-box,
@@ -42,6 +44,16 @@ button {
   font-size: 14px;
   border-radius: 8px;
   border: 1px solid #c8d0da;
+  box-sizing: border-box;
+}
+
+input {
+  width: 165px;
+}
+
+select {
+  min-width: 165px;
+  background: white;
 }
 
 button {
@@ -54,6 +66,19 @@ button {
 
 button:hover {
   background: #174ea6;
+}
+
+button.gray {
+  background: #6b7280;
+}
+
+button.gray:hover {
+  background: #4b5563;
+}
+
+#loginStatus {
+  font-weight: bold;
+  color: #1f3a5f;
 }
 
 .table-container {
@@ -76,6 +101,7 @@ thead th {
   background: linear-gradient(#1f6feb, #174ea6);
   color: white;
   padding: 13px;
+  text-align: center;
 }
 
 td {
@@ -93,7 +119,8 @@ tbody tr:hover {
 }
 
 td:first-child,
-td:nth-child(2) {
+td:nth-child(2),
+td:nth-child(3) {
   text-align: left;
 }
 

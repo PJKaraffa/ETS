@@ -3,62 +3,22 @@ let schools = [];
 let attendanceRecords = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  setupWeeks();
-  await checkUser();
-
   const { data } = await supabaseClient.auth.getUser();
 
-  if (data.user) {
-    await loadSchools();
-    await loadStudents();
-    await loadAttendance();
-  } else {
-    buildTable();
-  }
-});
-
-async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    alert(error.message);
+  if (!data.user) {
+    window.location.href = "login.html";
     return;
   }
 
-  await checkUser();
+  setupWeeks();
   await loadSchools();
   await loadStudents();
   await loadAttendance();
-}
+});
 
 async function logout() {
   await supabaseClient.auth.signOut();
-
-  students = [];
-  schools = [];
-  attendanceRecords = [];
-
-  document.getElementById("loginStatus").textContent = "Logged out";
-  document.getElementById("school").innerHTML = `<option value="">Select School</option>`;
-
-  buildTable();
-}
-
-async function checkUser() {
-  const { data } = await supabaseClient.auth.getUser();
-
-  if (data.user) {
-    document.getElementById("loginStatus").textContent =
-      "Logged in: " + data.user.email;
-  } else {
-    document.getElementById("loginStatus").textContent = "Not logged in";
-  }
+  window.location.href = "login.html";
 }
 
 async function loadSchools() {

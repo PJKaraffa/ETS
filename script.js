@@ -359,3 +359,12 @@ async function loadSchools() {
     });
 
 }
+const { data } = await supabaseClient
+    .from("students")
+    .select(`
+        *,
+        schools (
+            school_name
+        )
+    `)
+    .order("last_name");

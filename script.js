@@ -5,9 +5,16 @@ let attendanceRecords = [];
 document.addEventListener("DOMContentLoaded", async () => {
   setupWeeks();
   await checkUser();
-  await loadSchools();
-  await loadStudents();
-  await loadAttendance();
+
+  const { data } = await supabaseClient.auth.getUser();
+
+  if (data.user) {
+    await loadSchools();
+    await loadStudents();
+    await loadAttendance();
+  } else {
+    buildTable();
+  }
 });
 
 async function login() {
@@ -54,16 +61,42 @@ async function checkUser() {
 }
 
 async function loadSchools() {
+  const schoolSelect = document.getElementById("school");
+
+  if (!schoolSelect) {
+    alert("Could not find the school dropdown. Check id='school' in index.html.");
+    return;
+  }
+
+  const { data: userData } = await supabaseClient.auth.getUser();
+
+  if (!userData.user) {
+    alert("You are not logged in. Log in first, then schools will load.");
+    return;
+  }
+
   const { data, error } = await supabaseClient
     .from("schools")
-    .select("*")
-    .eq("active", true)
+    .select("id, school_name, active")
     .order("school_name");
 
   if (error) {
-    alert(error.message);
+    alert("School load error: " + error.message);
+    console.log(error);
     return;
   }
+
+  console.log("Schools loaded:", data);
+
+  schoolSelect.innerHTML = `<option value="">Select School</option>`;
+
+  data.forEach(school => {
+    const option = document.createElement("option");
+    option.value = school.id;
+    option.textContent = school.school_name;
+    schoolSelect.appendChild(option);
+  });
+}
 
   schools = data || [];
 

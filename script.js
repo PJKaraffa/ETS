@@ -329,3 +329,31 @@ function downloadFile(content, fileName, mimeType) {
 
   URL.revokeObjectURL(link.href);
 }
+
+let schools = [];
+
+async function loadSchools() {
+
+    const { data, error } = await supabaseClient
+        .from("schools")
+        .select("*")
+        .order("school_name");
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    schools = data;
+
+    const ddl = document.getElementById("school");
+    ddl.innerHTML = '<option value="">Select School</option>';
+
+    schools.forEach(s => {
+
+        ddl.innerHTML +=
+            `<option value="${s.id}">${s.school_name}</option>`;
+
+    });
+
+}

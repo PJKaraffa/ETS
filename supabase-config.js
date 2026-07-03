@@ -1,7 +1,13 @@
-const SUPABASE_URL = "https://aqqwgzdmwazzvapyfvzx.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Y5_yifLRZTKIF1HO-EfSdQ_K19NxATf";
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY";
 
 const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false
+        }
+    }
 );

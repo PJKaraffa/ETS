@@ -303,23 +303,39 @@ function exportWeekCSV() {
 }
 
 function setupWeeks() {
-  const weekSelect = document.getElementById("weekSelect");
-  weekSelect.innerHTML = "";
 
-  let monday = new Date(2026, 7, 31);
+    const weekSelect = document.getElementById("weekSelect");
+    weekSelect.innerHTML = "";
 
-  for (let i = 1; i <= 44; i++) {
-    const friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
+    const schoolYearStart = new Date(2026, 6, 1);   // July 1, 2026
+    const schoolYearEnd   = new Date(2027, 5, 30);  // June 30, 2027
 
-    const option = document.createElement("option");
-    option.value = formatDate(monday);
-    option.textContent = `Week ${i}: ${shortDate(monday)} - ${shortDate(friday)}`;
+    // Find the first Monday on or after July 1
+    let monday = new Date(schoolYearStart);
 
-    weekSelect.appendChild(option);
+    while (monday.getDay() !== 1) {
+        monday.setDate(monday.getDate() + 1);
+    }
 
-    monday.setDate(monday.getDate() + 7);
-  }
+    let week = 1;
+
+    while (monday <= schoolYearEnd) {
+
+        const friday = new Date(monday);
+        friday.setDate(monday.getDate() + 4);
+
+        const option = document.createElement("option");
+
+        option.value = formatDate(monday);
+        option.textContent =
+            `Week ${week}: ${shortDate(monday)} - ${shortDate(friday)}`;
+
+        weekSelect.appendChild(option);
+
+        monday.setDate(monday.getDate() + 7);
+        week++;
+    }
+}
 }
 
 function formatDate(date) {

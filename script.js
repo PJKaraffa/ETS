@@ -486,3 +486,29 @@ async function importRosterCSV() {
 
   fileInput.value = "";
 }
+async function exportSummaryCSV() {
+  const { data, error } = await supabaseClient
+    .from("student_attendance_summary")
+    .select("*")
+    .order("school_name")
+    .order("student_name");
+
+  if (error) {
+    alert("Summary export error: " + error.message);
+    return;
+  }
+
+  let csv = "SASID,Student Name,School,Attendance Records,Attendance Dates\n";
+
+  data.forEach(row => {
+    csv += [
+      row.sasid,
+      row.student_name,
+      row.school_name,
+      row.attendance_records,
+      row.attendance_dates
+    ].map(x => `"${x || ""}"`).join(",") + "\n";
+  });
+
+  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
+}

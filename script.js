@@ -360,18 +360,7 @@ function downloadFile(content, fileName, mimeType) {
 async function exportAllCSV() {
   const { data, error } = await supabaseClient
     .from("attendance")
-    .select(`
-      attendance_date,
-      code,
-      students (
-        sasid,
-        first_name,
-        last_name,
-        schools (
-          school_name
-        )
-      )
-    `)
+    .select("*")
     .order("attendance_date");
 
   if (error) {
@@ -379,19 +368,18 @@ async function exportAllCSV() {
     return;
   }
 
-  let csv = "SASID,First Name,Last Name,School,Attendance Date,Code\n";
+  let csv = "SASID,Student Name,School,Attendance Date,Code\n";
 
-  data.forEach(row => {
+  data.forEach(record => {
+    const student = students.find(s => s.id === record.student_id);
+
     csv += [
-      row.students?.sasid || "",
-      row.students?.first_name || "",
-      row.students?.last_name || "",
-      row.students?.schools?.school_name || "",
-      row.attendance_date || "",
-      row.code || ""
-    ]
-      .map(x => `"${x}"`)
-      .join(",") + "\n";
+      student ? student.sasid : "",
+      student ? `${student.first_name || ""} ${student.last_name || ""}` : "",
+      student && student.schools ? student.schools.school_name : "",
+      record.attendance_date,
+      record.code
+    ].map(x => `"${x || ""}"`).join(",") + "\n";
   });
 
   downloadFile(csv, "ETS_Attendance_All.csv", "text/csv");

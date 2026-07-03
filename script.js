@@ -306,7 +306,7 @@ function setupWeeks() {
   const weekSelect = document.getElementById("weekSelect");
   weekSelect.innerHTML = "";
 
-  let monday = new Date(2026, 7, 31);
+  let monday = new Date(2026, 6, 30);
 
   for (let i = 1; i <= 44; i++) {
     const friday = new Date(monday);

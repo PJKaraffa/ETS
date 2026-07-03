@@ -1,147 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETS Attendance 2.0</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETS Attendance 2.0</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="app">
 
-    <!-- ===================================================== -->
-    <!-- Header -->
-    <!-- ===================================================== -->
+  <div class="header-row">
+    <h1>ETS Attendance 2.0</h1>
 
-    <div class="header-row">
+    <div class="header-buttons">
+      <input type="file" id="rosterFile" accept=".csv" style="display:none" onchange="importRosterCSV()">
 
-        <h1>ETS Attendance 2.0</h1>
+      <button class="green" onclick="document.getElementById('rosterFile').click();">
+        Import Roster
+      </button>
 
-        <div class="header-buttons">
+      <button class="gray" onclick="logout()">Logout</button>
+    </div>
+  </div>
 
-            <!-- Hidden file selector -->
-            <input
-                type="file"
-                id="rosterFile"
-                accept=".csv"
-                style="display:none"
-                onchange="importRosterCSV()">
+  <div class="top-bar">
+    <div class="left-controls">
+      <input id="sasid" placeholder="SASID">
+      <input id="firstName" placeholder="First Name">
+      <input id="lastName" placeholder="Last Name">
 
-            <button class="green"
-                    onclick="document.getElementById('rosterFile').click();">
-                Import Roster
-            </button>
+      <select id="school">
+        <option value="">Select School</option>
+      </select>
 
-            <button class="gray"
-                    onclick="logout()">
-                Logout
-            </button>
-
-        </div>
-
+      <button onclick="addStudent()">Add Student</button>
     </div>
 
-    <!-- ===================================================== -->
-    <!-- Toolbar -->
-    <!-- ===================================================== -->
+    <div class="right-controls">
+      <select id="weekSelect" onchange="loadAttendance()"></select>
 
-    <div class="top-bar">
-
-        <div class="left-controls">
-
-            <input
-                id="sasid"
-                placeholder="SASID">
-
-            <input
-                id="firstName"
-                placeholder="First Name">
-
-            <input
-                id="lastName"
-                placeholder="Last Name">
-
-            <select id="school">
-                <option value="">Select School</option>
-            </select>
-
-            <button onclick="addStudent()">
-                Add Student
-            </button>
-
-        </div>
-
-        <div class="right-controls">
-
-            <select
-                id="weekSelect"
-                onchange="loadAttendance()">
-            </select>
-
-            <button onclick="exportWeekCSV()">
-                Export Week
-            </button>
-
-            <button onclick="exportSummaryCSV()">
-                Export Summary
-            </button>
-
-            <button onclick="exportAllCSV()">
-                Export All
-            </button>
-
-        </div>
-
+      <button onclick="exportWeekCSV()">Export Week</button>
+      <button onclick="exportSummaryCSV()">Export Summary</button>
+      <button onclick="exportAllCSV()">Export All</button>
     </div>
+  </div>
 
-    <!-- ===================================================== -->
-    <!-- Attendance Table -->
-    <!-- ===================================================== -->
+  <div class="table-container">
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>SASID</th>
+          <th>Student Name</th>
+          <th>School</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Total</th>
+        </tr>
+      </thead>
 
-    <div class="table-container">
-
-        <table id="attendanceTable">
-
-            <thead>
-
-                <tr>
-
-                    <th>SASID</th>
-                    <th>Student Name</th>
-                    <th>School</th>
-
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-
-                    <th>Total</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="attendanceBody">
-
-            </tbody>
-
-        </table>
-
-    </div>
+      <tbody id="attendanceBody"></tbody>
+    </table>
+  </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="supabase-config.js"></script>
-
 <script src="script.js"></script>
 
 </body>
-
 </html>

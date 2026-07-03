@@ -292,21 +292,33 @@ function exportWeekCSV() {
 }
 
 function setupWeeks() {
+  const weekSelect = document.getElementById("weekSelect");
+  weekSelect.innerHTML = "";
 
-    const weekSelect = document.getElementById("weekSelect");
-    weekSelect.innerHTML = "";
+  const schoolYearEnd = new Date(2027, 5, 30); // June 30, 2027
 
-    const schoolYearStart = new Date(2026, 6, 1);   // July 1, 2026
-    const schoolYearEnd   = new Date(2027, 5, 30);  // June 30, 2027
+  let monday = new Date(2026, 5, 29); // June 29, 2026
+  let weekNumber = 1;
 
-    let weekNumber = 1;
+  while (monday <= schoolYearEnd) {
+    let friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
 
-    // ----- First partial week -----
-    let firstEnd = new Date(schoolYearStart);
-
-    while (firstEnd.getDay() !== 5 && firstEnd <= schoolYearEnd) {
-        firstEnd.setDate(firstEnd.getDate() + 1);
+    if (friday > schoolYearEnd) {
+      friday = new Date(schoolYearEnd);
     }
+
+    const option = document.createElement("option");
+    option.value = formatDate(monday);
+    option.textContent =
+      `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+
+    weekSelect.appendChild(option);
+
+    monday.setDate(monday.getDate() + 7);
+    weekNumber++;
+  }
+}
 
     let option = document.createElement("option");
     option.value = formatDate(schoolYearStart);

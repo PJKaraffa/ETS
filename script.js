@@ -295,53 +295,49 @@ function setupWeeks() {
   const weekSelect = document.getElementById("weekSelect");
   weekSelect.innerHTML = "";
 
-  // School year boundaries: June 29, 2026 -> June 30, 2027
-  const schoolYearStart = new Date(2026, 5, 29); // month is 0-based
-  const schoolYearEnd = new Date(2027, 5, 30);
+  let monday = makeDate(2026, 6, 29); // Week 1: June 29, 2026
+  const schoolYearEnd = makeDate(2027, 6, 30);
 
-  let monday = new Date(schoolYearStart);
   let weekNumber = 1;
 
   while (monday <= schoolYearEnd) {
-    const friday = new Date(monday);
+    let friday = new Date(monday);
     friday.setDate(monday.getDate() + 4);
 
-    // Stop if this week starts after school year ends
-    if (monday > schoolYearEnd) break;
+    if (friday > schoolYearEnd) {
+      friday = new Date(schoolYearEnd);
+    }
 
     const option = document.createElement("option");
-    option.value = formatDate(monday);
-    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(
-      friday > schoolYearEnd ? schoolYearEnd : friday
-    )}`;
+    option.value = toISODate(monday);
+    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
 
     weekSelect.appendChild(option);
 
     monday.setDate(monday.getDate() + 7);
     weekNumber++;
   }
+}
 
-  // Optional: default selected week = first week
-  if (weekSelect.options.length > 0) {
-    weekSelect.selectedIndex = 0;
-  }
+function makeDate(year, month, day) {
+  return new Date(year, month - 1, day);
 }
 
 function formatDate(date) {
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const yyyy = date.getFullYear();
-
-  return `${mm}-${dd}-${yyyy}`;
+  return toISODate(date);
 }
 
 function parseDate(text) {
-  const parts = text.split("-");
-  return new Date(parts[2], parts[0] - 1, parts[1]);
+  const [year, month, day] = text.split("-").map(Number);
+  return makeDate(year, month, day);
 }
 
 function toISODate(date) {
-  return date.toISOString().split("T")[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  return `${y}-${m}-${d}`;
 }
 
 function shortDate(date) {

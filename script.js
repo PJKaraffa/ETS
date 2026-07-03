@@ -307,8 +307,8 @@ function setupWeeks() {
     const weekSelect = document.getElementById("weekSelect");
     weekSelect.innerHTML = "";
 
-    const schoolYearStart = new Date(2026, 6, 1);   // July 1, 2026
-    const schoolYearEnd   = new Date(2027, 5, 30);  // June 30, 2027
+    const schoolYearStart = new Date(2026, 7, 1);   // July 1, 2026
+    const schoolYearEnd   = new Date(2027, 6, 30);  // June 30, 2027
 
     // Find the first Monday on or after July 1
     let monday = new Date(schoolYearStart);

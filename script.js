@@ -357,3 +357,25 @@ function downloadFile(content, fileName, mimeType) {
 
   URL.revokeObjectURL(link.href);
 }
+async function exportSummaryCSV() {
+  const { data, error } = await supabaseClient
+    .from("student_attendance_summary")
+    .select("*");
+
+  if (error) {
+    alert("Summary export error: " + error.message);
+    return;
+  }
+
+  let csv = "Student Name,School,Attendance Records\n";
+
+  data.forEach(row => {
+    csv += [
+      row.student_name,
+      row.school_name,
+      row.attendance_records
+    ].map(x => `"${x || ""}"`).join(",") + "\n";
+  });
+
+  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
+}

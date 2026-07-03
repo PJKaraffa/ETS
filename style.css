@@ -1,186 +1,355 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 28px;
-  color: #111827;
+/* ======================================================
+   ETS Attendance 2.0
+   ====================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.app {
-  max-width: 1500px;
-  margin: auto;
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:#eef2f7;
+    color:#333;
+    padding:25px;
 }
 
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.app{
+    max-width:1700px;
+    margin:auto;
 }
 
-h1 {
-  color: #1f3a5f;
-  font-size: 42px;
-  margin-bottom: 25px;
+/* ======================================================
+   Header
+   ====================================================== */
+
+.header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
 }
 
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.header-row h1{
+    font-size:40px;
+    color:#1f3a5f;
+    font-weight:700;
+}
+
+/* ======================================================
+   Toolbar
+   ====================================================== */
+
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+
+    background:white;
+    padding:18px;
+    border-radius:12px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    margin-bottom:20px;
 }
 
 .left-controls,
-.right-controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
+.right-controls{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+
 }
+
+.right-controls{
+    margin-left:auto;
+}
+
+/* ======================================================
+   Inputs
+   ====================================================== */
 
 input,
-select,
-button {
-  height: 42px;
-  padding: 0 14px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #c8d0da;
-  box-sizing: border-box;
+select{
+
+    height:42px;
+
+    padding:0 12px;
+
+    border:1px solid #cfd8e3;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+    background:white;
+
 }
 
-input {
-  width: 165px;
+input{
+
+    width:160px;
+
 }
 
-select {
-  min-width: 165px;
-  background: white;
+select{
+
+    min-width:175px;
+
 }
 
-button {
-  background: #1f6feb;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
+/* ======================================================
+   Buttons
+   ====================================================== */
+
+button{
+
+    height:42px;
+
+    padding:0 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    font-size:14px;
+
+    background:#1976d2;
+
+    color:white;
+
+    transition:.2s;
+
 }
 
-button:hover {
-  background: #174ea6;
+button:hover{
+
+    background:#0d47a1;
+
 }
 
-button.gray {
-  background: #6b7280;
+button.gray{
+
+    background:#6c757d;
+
 }
 
-button.gray:hover {
-  background: #4b5563;
+button.gray:hover{
+
+    background:#4f5962;
+
 }
 
-.table-container {
-  max-height: 650px;
-  overflow-y: auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.14);
+/* ======================================================
+   Table
+   ====================================================== */
+
+.table-container{
+
+    background:white;
+
+    border-radius:12px;
+
+    overflow:auto;
+
+    max-height:700px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.10);
+
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
 }
 
-thead th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: linear-gradient(#1f6feb, #174ea6);
-  color: white;
-  padding: 13px;
-  text-align: center;
+thead th{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    background:#1565c0;
+
+    color:white;
+
+    padding:14px;
+
+    text-align:center;
+
+    font-size:14px;
+
 }
 
-td {
-  border: 1px solid #e1e5ea;
-  padding: 10px;
-  text-align: center;
+tbody td{
+
+    border:1px solid #e4e7eb;
+
+    padding:10px;
+
+    text-align:center;
+
 }
 
-tbody tr:nth-child(even) {
-  background: #f5f9ff;
+tbody tr:nth-child(even){
+
+    background:#f8fbff;
+
 }
 
-tbody tr:hover {
-  background: #dbeeff;
+tbody tr:hover{
+
+    background:#dceeff;
+
 }
 
 td:first-child,
 td:nth-child(2),
-td:nth-child(3) {
-  text-align: left;
+td:nth-child(3){
+
+    text-align:left;
+
 }
 
-td:last-child {
-  background: #eef5ff;
-  font-weight: bold;
+td:last-child{
+
+    font-weight:bold;
+
+    background:#eef5ff;
+
 }
 
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+/* ======================================================
+   Checkboxes
+   ====================================================== */
+
+input[type=checkbox]{
+
+    width:20px;
+
+    height:20px;
+
+    cursor:pointer;
+
 }
 
-.date-text {
-  font-size: 13px;
-  margin-top: 4px;
+.date-text{
+
+    font-size:12px;
+
+    color:#666;
+
+    margin-top:3px;
+
 }
 
-.empty {
-  text-align: center;
-  padding: 25px;
-  color: #666;
-  font-style: italic;
+/* ======================================================
+   Empty Table
+   ====================================================== */
+
+.empty{
+
+    padding:40px;
+
+    color:#888;
+
+    font-style:italic;
+
 }
 
-/* Login Page */
+/* ======================================================
+   Login Page
+   ====================================================== */
 
-.login-body {
-  min-height: 100vh;
-  background: #eef3f8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
+.login-body{
+
+    background:#edf2f7;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:100vh;
+
 }
 
-.login-card {
-  width: 380px;
-  background: white;
-  padding: 35px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,.15);
-  text-align: center;
+.login-card{
+
+    width:420px;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:40px;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+
 }
 
-.login-card h1 {
-  margin: 0 0 5px 0;
-  color: #1f3a5f;
+.login-card h1{
+
+    text-align:center;
+
+    color:#1f3a5f;
+
+    margin-bottom:8px;
+
 }
 
-.login-card h2 {
-  margin-bottom: 25px;
-  color: #555;
+.login-card h2{
+
+    text-align:center;
+
+    color:#777;
+
+    font-size:18px;
+
+    margin-bottom:30px;
+
+    font-weight:normal;
+
 }
 
-.login-card input,
-.login-card button {
-  width: 100%;
-  margin-bottom: 14px;
+.login-card input{
+
+    width:100%;
+
+    margin-bottom:15px;
+
 }
 
-#loginMessage {
-  color: #c62828;
-  font-weight: bold;
+.login-card button{
+
+    width:100%;
+
+}
+
+#loginMessage{
+
+    margin-top:15px;
+
+    text-align:center;
+
+    color:#c62828;
+
+    font-weight:bold;
+
 }

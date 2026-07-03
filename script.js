@@ -58,16 +58,23 @@ async function addStudent() {
 
   const fullName = `${firstName} ${lastName}`;
 
-  const { error } = await supabaseClient
-    .from("students")
-    .insert({
-      sasid: sasid,
-      first_name: firstName,
-      last_name: lastName,
-      student_name: fullName,
-      school_id: Number(schoolId),
-      active: true
-    });
+ const { data, error } = await supabaseClient
+  .from("students")
+  .select(`
+      id,
+      sasid,
+      first_name,
+      last_name,
+      student_name,
+      school_id,
+      active,
+      schools (
+        school_name
+      )
+  `)
+  .eq("active", true)
+  .order("last_name", { ascending: true })
+  .order("first_name", { ascending: true });
 
   if (error) {
     alert("Student insert error: " + error.message);

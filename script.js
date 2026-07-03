@@ -3,10 +3,10 @@ let schools = [];
 let attendanceRecords = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { data } = await supabaseClient.auth.getUser();
+  const { data, error } = await supabaseClient.auth.getSession();
 
-  if (!data.user) {
-    window.location.href = "login.html";
+  if (error || !data.session) {
+    window.location.replace("./login.html");
     return;
   }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function logout() {
   await supabaseClient.auth.signOut();
-  window.location.href = "login.html";
+  window.location.replace("./login.html");
 }
 
 async function loadSchools() {
@@ -35,7 +35,6 @@ async function loadSchools() {
   }
 
   schools = data || [];
-
   schoolSelect.innerHTML = `<option value="">Select School</option>`;
 
   schools.forEach(school => {
@@ -52,7 +51,7 @@ async function addStudent() {
   const lastName = document.getElementById("lastName").value.trim();
   const schoolId = document.getElementById("school").value;
 
-  if (sasid === "" || firstName === "" || lastName === "" || schoolId === "") {
+  if (!sasid || !firstName || !lastName || !schoolId) {
     alert("Enter SASID, First Name, Last Name, and School.");
     return;
   }
@@ -62,7 +61,7 @@ async function addStudent() {
   const { error } = await supabaseClient
     .from("students")
     .insert({
-      sasid: sasid,
+      sasid,
       first_name: firstName,
       last_name: lastName,
       student_name: fullName,
@@ -153,17 +152,11 @@ function buildTable() {
   students.forEach(student => {
     const tr = document.createElement("tr");
 
-    const tdSasid = document.createElement("td");
-    tdSasid.textContent = student.sasid;
-    tr.appendChild(tdSasid);
-
-    const tdName = document.createElement("td");
-    tdName.textContent = `${student.first_name || ""} ${student.last_name || ""}`;
-    tr.appendChild(tdName);
-
-    const tdSchool = document.createElement("td");
-    tdSchool.textContent = student.schools ? student.schools.school_name : "";
-    tr.appendChild(tdSchool);
+    tr.innerHTML = `
+      <td>${student.sasid}</td>
+      <td>${student.first_name || ""} ${student.last_name || ""}</td>
+      <td>${student.schools ? student.schools.school_name : ""}</td>
+    `;
 
     let total = 0;
 
@@ -189,11 +182,7 @@ function buildTable() {
       checkbox.checked = checked;
 
       checkbox.addEventListener("change", async () => {
-        await saveAttendance(
-          student.id,
-          dateISO,
-          checkbox.checked ? "P" : "A"
-        );
+        await saveAttendance(student.id, dateISO, checkbox.checked ? "P" : "A");
       });
 
       const dateDiv = document.createElement("div");
@@ -205,9 +194,9 @@ function buildTable() {
       tr.appendChild(td);
     });
 
-    const tdTotal = document.createElement("td");
-    tdTotal.textContent = total;
-    tr.appendChild(tdTotal);
+    const totalTd = document.createElement("td");
+    totalTd.textContent = total;
+    tr.appendChild(totalTd);
 
     tbody.appendChild(tr);
   });
@@ -223,7 +212,7 @@ async function saveAttendance(studentId, attendanceDate, code) {
     const { error } = await supabaseClient
       .from("attendance")
       .update({
-        code: code,
+        code,
         updated_at: new Date().toISOString()
       })
       .eq("id", existing.id);
@@ -238,7 +227,7 @@ async function saveAttendance(studentId, attendanceDate, code) {
       .insert({
         student_id: studentId,
         attendance_date: attendanceDate,
-        code: code
+        code
       });
 
     if (error) {

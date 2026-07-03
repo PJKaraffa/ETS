@@ -1,147 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETS Attendance 2.0</title>
-
-    <link rel="stylesheet" href="style.css">
+  <title>ETS Attendance Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="login-body">
 
-<div class="app">
+  <div class="login-card">
+    <h1>ETS Attendance</h1>
+    <h2>Staff Login</h2>
 
-    <!-- ===================================================== -->
-    <!-- Header -->
-    <!-- ===================================================== -->
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-    <div class="header-row">
+    <button onclick="login()">Login</button>
 
-        <h1>ETS Attendance 2.0</h1>
-
-        <div class="header-buttons">
-
-            <!-- Hidden file selector -->
-            <input
-                type="file"
-                id="rosterFile"
-                accept=".csv"
-                style="display:none"
-                onchange="importRosterCSV()">
-
-            <button class="green"
-                    onclick="document.getElementById('rosterFile').click();">
-                Import Roster
-            </button>
-
-            <button class="gray"
-                    onclick="logout()">
-                Logout
-            </button>
-
-        </div>
-
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- Toolbar -->
-    <!-- ===================================================== -->
-
-    <div class="top-bar">
-
-        <div class="left-controls">
-
-            <input
-                id="sasid"
-                placeholder="SASID">
-
-            <input
-                id="firstName"
-                placeholder="First Name">
-
-            <input
-                id="lastName"
-                placeholder="Last Name">
-
-            <select id="school">
-                <option value="">Select School</option>
-            </select>
-
-            <button onclick="addStudent()">
-                Add Student
-            </button>
-
-        </div>
-
-        <div class="right-controls">
-
-            <select
-                id="weekSelect"
-                onchange="loadAttendance()">
-            </select>
-
-            <button onclick="exportWeekCSV()">
-                Export Week
-            </button>
-
-            <button onclick="exportSummaryCSV()">
-                Export Summary
-            </button>
-
-            <button onclick="exportAllCSV()">
-                Export All
-            </button>
-
-        </div>
-
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- Attendance Table -->
-    <!-- ===================================================== -->
-
-    <div class="table-container">
-
-        <table id="attendanceTable">
-
-            <thead>
-
-                <tr>
-
-                    <th>SASID</th>
-                    <th>Student Name</th>
-                    <th>School</th>
-
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-
-                    <th>Total</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="attendanceBody">
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
+    <p id="loginMessage"></p>
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="supabase-config.js"></script>
 
-<script src="script.js"></script>
+<script>
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    document.getElementById("loginMessage").textContent = error.message;
+    return;
+  }
+
+  window.location.href = "index.html";
+}
+</script>
 
 </body>
-
 </html>

@@ -292,35 +292,40 @@ function exportWeekCSV() {
 }
 
 function setupWeeks() {
-  console.log("NEW setupWeeks loaded - Week 1 starts 6/29/2026");
-
   const weekSelect = document.getElementById("weekSelect");
   weekSelect.innerHTML = "";
 
+  // School year boundaries: June 29, 2026 -> June 30, 2027
+  const schoolYearStart = new Date(2026, 5, 29); // month is 0-based
   const schoolYearEnd = new Date(2027, 5, 30);
 
-  let monday = new Date(2026, 5, 29); // June 29, 2026
+  let monday = new Date(schoolYearStart);
   let weekNumber = 1;
 
   while (monday <= schoolYearEnd) {
-    let friday = new Date(monday);
+    const friday = new Date(monday);
     friday.setDate(monday.getDate() + 4);
 
-    if (friday > schoolYearEnd) {
-      friday = new Date(schoolYearEnd);
-    }
+    // Stop if this week starts after school year ends
+    if (monday > schoolYearEnd) break;
 
     const option = document.createElement("option");
     option.value = formatDate(monday);
-    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(
+      friday > schoolYearEnd ? schoolYearEnd : friday
+    )}`;
 
     weekSelect.appendChild(option);
 
     monday.setDate(monday.getDate() + 7);
     weekNumber++;
   }
-}
 
+  // Optional: default selected week = first week
+  if (weekSelect.options.length > 0) {
+    weekSelect.selectedIndex = 0;
+  }
+}
 
 function formatDate(date) {
   const mm = String(date.getMonth() + 1).padStart(2, "0");

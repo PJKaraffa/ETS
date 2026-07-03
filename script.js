@@ -384,3 +384,98 @@ async function exportAllCSV() {
 
   downloadFile(csv, "ETS_Attendance_All.csv", "text/csv");
 }
+async function importRosterCSV() {
+  const fileInput = document.getElementById("rosterFile");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please choose a CSV file first.");
+    return;
+  }
+
+  const text = await file.text();
+  const rows = text.split(/\r?\n/).filter(row => row.trim() !== "");
+
+  if (rows.length < 2) {
+    alert("CSV file is empty or missing data.");
+    return;
+  }
+
+  const headers = rows[0].split(",").map(h => h.trim().toLowerCase());
+
+  const sasidCol = headers.indexOf("sasid");
+  const firstCol = headers.indexOf("first name");
+  const lastCol = headers.indexOf("last name");
+  const schoolCol = headers.indexOf("school");
+
+  if (sasidCol === -1 || firstCol === -1 || lastCol === -1 || schoolCol === -1) {
+    alert("CSV must have headers: SASID, First Name, Last Name, School");
+    return;
+  }
+
+  let added = 0;
+  let skipped = 0;
+  let schoolMissing = 0;
+
+  for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i].split(",").map(x => x.trim());
+
+    const sasid = cols[sasidCol];
+    const firstName = cols[firstCol];
+    const lastName = cols[lastCol];
+    const schoolName = cols[schoolCol];
+
+    if (!sasid || !firstName || !lastName || !schoolName) {
+      skipped++;
+      continue;
+    }
+
+    const school = schools.find(s =>
+      s.school_name.toLowerCase() === schoolName.toLowerCase()
+    );
+
+    if (!school) {
+      schoolMissing++;
+      continue;
+    }
+
+    const existing = students.find(s => s.sasid === sasid);
+
+    if (existing) {
+      skipped++;
+      continue;
+    }
+
+    const fullName = `${firstName} ${lastName}`;
+
+    const { error } = await supabaseClient
+      .from("students")
+      .insert({
+        sasid: sasid,
+        first_name: firstName,
+        last_name: lastName,
+        student_name: fullName,
+        school_id: school.id,
+        active: true
+      });
+
+    if (error) {
+      skipped++;
+      console.log(error.message);
+    } else {
+      added++;
+    }
+  }
+
+  await loadStudents();
+  await loadAttendance();
+
+  alert(
+    `Roster Import Complete\n\n` +
+    `Added: ${added}\n` +
+    `Skipped: ${skipped}\n` +
+    `School Not Found: ${schoolMissing}`
+  );
+
+  fileInput.value = "";
+}

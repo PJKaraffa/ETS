@@ -1,10 +1,3 @@
-const { data } = await supabaseClient.auth.getSession();
-
-if (!data.session) {
-    window.location.href = "login.html";
-}
-
-
 let students = [];
 let schools = [];
 let attendanceRecords = [];
@@ -13,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error || !data.session) {
-    window.location.replace("./login.html");
+    window.location.replace("./index.html");
     return;
   }
 
@@ -25,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function logout() {
   await supabaseClient.auth.signOut();
-  window.location.replace("./login.html");
+  window.location.replace("./index.html");
 }
 
 async function loadSchools() {
@@ -65,16 +58,14 @@ async function addStudent() {
 
   const fullName = `${firstName} ${lastName}`;
 
-  const { error } = await supabaseClient
-    .from("students")
-    .insert({
-      sasid,
-      first_name: firstName,
-      last_name: lastName,
-      student_name: fullName,
-      school_id: Number(schoolId),
-      active: true
-    });
+  const { error } = await supabaseClient.from("students").insert({
+    sasid,
+    first_name: firstName,
+    last_name: lastName,
+    student_name: fullName,
+    school_id: Number(schoolId),
+    active: true
+  });
 
   if (error) {
     alert("Student insert error: " + error.message);
@@ -229,13 +220,11 @@ async function saveAttendance(studentId, attendanceDate, code) {
       return;
     }
   } else {
-    const { error } = await supabaseClient
-      .from("attendance")
-      .insert({
-        student_id: studentId,
-        attendance_date: attendanceDate,
-        code
-      });
+    const { error } = await supabaseClient.from("attendance").insert({
+      student_id: studentId,
+      attendance_date: attendanceDate,
+      code
+    });
 
     if (error) {
       alert("Attendance insert error: " + error.message);
@@ -298,72 +287,33 @@ function exportWeekCSV() {
   downloadFile(csv, `ETS_Attendance_${weekStart}.csv`, "text/csv");
 }
 
-function setupWeeks() {
-  const weekSelect = document.getElementById("weekSelect");
-  weekSelect.innerHTML = "";
+async function exportSummaryCSV() {
+  const { data, error } = await supabaseClient
+    .from("student_attendance_summary")
+    .select("*")
+    .order("school_name")
+    .order("student_name");
 
-  let monday = makeDate(2026, 6, 29); // Week 1: June 29, 2026
-  const schoolYearEnd = makeDate(2027, 6, 30);
-
-  let weekNumber = 1;
-
-  while (monday <= schoolYearEnd) {
-    let friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
-
-    if (friday > schoolYearEnd) {
-      friday = new Date(schoolYearEnd);
-    }
-
-    const option = document.createElement("option");
-    option.value = toISODate(monday);
-    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
-
-    weekSelect.appendChild(option);
-
-    monday.setDate(monday.getDate() + 7);
-    weekNumber++;
+  if (error) {
+    alert("Summary export error: " + error.message);
+    return;
   }
+
+  let csv = "SASID,Student Name,School,Attendance Records,Attendance Dates\n";
+
+  data.forEach(row => {
+    csv += [
+      row.sasid,
+      row.student_name,
+      row.school_name,
+      row.attendance_records,
+      row.attendance_dates
+    ].map(x => `"${x || ""}"`).join(",") + "\n";
+  });
+
+  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
 }
 
-function makeDate(year, month, day) {
-  return new Date(year, month - 1, day);
-}
-
-function formatDate(date) {
-  return toISODate(date);
-}
-
-function parseDate(text) {
-  const [year, month, day] = text.split("-").map(Number);
-  return makeDate(year, month, day);
-}
-
-function toISODate(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-
-  return `${y}-${m}-${d}`;
-}
-
-function shortDate(date) {
-  return `${date.getMonth() + 1}/${date.getDate()}`;
-}
-
-function downloadFile(content, fileName, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const link = document.createElement("a");
-
-  link.href = URL.createObjectURL(blob);
-  link.download = fileName;
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  URL.revokeObjectURL(link.href);
-}
 async function exportAllCSV() {
   const { data, error } = await supabaseClient
     .from("attendance")
@@ -391,6 +341,7 @@ async function exportAllCSV() {
 
   downloadFile(csv, "ETS_Attendance_All.csv", "text/csv");
 }
+
 async function importRosterCSV() {
   const fileInput = document.getElementById("rosterFile");
   const file = fileInput.files[0];
@@ -455,16 +406,14 @@ async function importRosterCSV() {
 
     const fullName = `${firstName} ${lastName}`;
 
-    const { error } = await supabaseClient
-      .from("students")
-      .insert({
-        sasid: sasid,
-        first_name: firstName,
-        last_name: lastName,
-        student_name: fullName,
-        school_id: school.id,
-        active: true
-      });
+    const { error } = await supabaseClient.from("students").insert({
+      sasid,
+      first_name: firstName,
+      last_name: lastName,
+      student_name: fullName,
+      school_id: school.id,
+      active: true
+    });
 
     if (error) {
       skipped++;
@@ -486,29 +435,70 @@ async function importRosterCSV() {
 
   fileInput.value = "";
 }
-async function exportSummaryCSV() {
-  const { data, error } = await supabaseClient
-    .from("student_attendance_summary")
-    .select("*")
-    .order("school_name")
-    .order("student_name");
 
-  if (error) {
-    alert("Summary export error: " + error.message);
-    return;
+function setupWeeks() {
+  const weekSelect = document.getElementById("weekSelect");
+  weekSelect.innerHTML = "";
+
+  let monday = makeDate(2026, 6, 29);
+  const schoolYearEnd = makeDate(2027, 6, 30);
+
+  let weekNumber = 1;
+
+  while (monday <= schoolYearEnd) {
+    let friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+
+    if (friday > schoolYearEnd) {
+      friday = new Date(schoolYearEnd);
+    }
+
+    const option = document.createElement("option");
+    option.value = toISODate(monday);
+    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+
+    weekSelect.appendChild(option);
+
+    monday.setDate(monday.getDate() + 7);
+    weekNumber++;
   }
+}
 
-  let csv = "SASID,Student Name,School,Attendance Records,Attendance Dates\n";
+function makeDate(year, month, day) {
+  return new Date(year, month - 1, day);
+}
 
-  data.forEach(row => {
-    csv += [
-      row.sasid,
-      row.student_name,
-      row.school_name,
-      row.attendance_records,
-      row.attendance_dates
-    ].map(x => `"${x || ""}"`).join(",") + "\n";
-  });
+function formatDate(date) {
+  return toISODate(date);
+}
 
-  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
+function parseDate(text) {
+  const [year, month, day] = text.split("-").map(Number);
+  return makeDate(year, month, day);
+}
+
+function toISODate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  return `${y}-${m}-${d}`;
+}
+
+function shortDate(date) {
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
+function downloadFile(content, fileName, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(link.href);
 }

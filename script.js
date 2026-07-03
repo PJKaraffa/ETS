@@ -320,39 +320,6 @@ function setupWeeks() {
   }
 }
 
-    let option = document.createElement("option");
-    option.value = formatDate(schoolYearStart);
-    option.textContent =
-        `Week ${weekNumber}: ${shortDate(schoolYearStart)} - ${shortDate(firstEnd)}`;
-
-    weekSelect.appendChild(option);
-
-    weekNumber++;
-
-    // ----- First Monday after July 1 -----
-    let monday = new Date(firstEnd);
-    monday.setDate(monday.getDate() + 3); // Friday -> Monday
-
-    // ----- Full Monday-Friday weeks -----
-    while (monday <= schoolYearEnd) {
-
-        let friday = new Date(monday);
-        friday.setDate(monday.getDate() + 4);
-
-        if (friday > schoolYearEnd)
-            friday = new Date(schoolYearEnd);
-
-        option = document.createElement("option");
-        option.value = formatDate(monday);
-        option.textContent =
-            `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
-
-        weekSelect.appendChild(option);
-
-        monday.setDate(monday.getDate() + 7);
-        weekNumber++;
-    }
-}
 
 
 function formatDate(date) {

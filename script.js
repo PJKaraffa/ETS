@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error || !data.session) {
-    window.location.replace("./index.html");
+    window.location.replace("./login.html");
     return;
   }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function logout() {
   await supabaseClient.auth.signOut();
-  window.location.replace("./index.html");
+  window.location.replace("./login.html");
 }
 
 async function loadSchools() {
@@ -58,14 +58,16 @@ async function addStudent() {
 
   const fullName = `${firstName} ${lastName}`;
 
-  const { error } = await supabaseClient.from("students").insert({
-    sasid,
-    first_name: firstName,
-    last_name: lastName,
-    student_name: fullName,
-    school_id: Number(schoolId),
-    active: true
-  });
+  const { error } = await supabaseClient
+    .from("students")
+    .insert({
+      sasid: sasid,
+      first_name: firstName,
+      last_name: lastName,
+      student_name: fullName,
+      school_id: Number(schoolId),
+      active: true
+    });
 
   if (error) {
     alert("Student insert error: " + error.message);
@@ -210,7 +212,7 @@ async function saveAttendance(studentId, attendanceDate, code) {
     const { error } = await supabaseClient
       .from("attendance")
       .update({
-        code,
+        code: code,
         updated_at: new Date().toISOString()
       })
       .eq("id", existing.id);
@@ -220,11 +222,13 @@ async function saveAttendance(studentId, attendanceDate, code) {
       return;
     }
   } else {
-    const { error } = await supabaseClient.from("attendance").insert({
-      student_id: studentId,
-      attendance_date: attendanceDate,
-      code
-    });
+    const { error } = await supabaseClient
+      .from("attendance")
+      .insert({
+        student_id: studentId,
+        attendance_date: attendanceDate,
+        code: code
+      });
 
     if (error) {
       alert("Attendance insert error: " + error.message);
@@ -287,33 +291,6 @@ function exportWeekCSV() {
   downloadFile(csv, `ETS_Attendance_${weekStart}.csv`, "text/csv");
 }
 
-async function exportSummaryCSV() {
-  const { data, error } = await supabaseClient
-    .from("student_attendance_summary")
-    .select("*")
-    .order("school_name")
-    .order("student_name");
-
-  if (error) {
-    alert("Summary export error: " + error.message);
-    return;
-  }
-
-  let csv = "SASID,Student Name,School,Attendance Records,Attendance Dates\n";
-
-  data.forEach(row => {
-    csv += [
-      row.sasid,
-      row.student_name,
-      row.school_name,
-      row.attendance_records,
-      row.attendance_dates
-    ].map(x => `"${x || ""}"`).join(",") + "\n";
-  });
-
-  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
-}
-
 async function exportAllCSV() {
   const { data, error } = await supabaseClient
     .from("attendance")
@@ -340,6 +317,33 @@ async function exportAllCSV() {
   });
 
   downloadFile(csv, "ETS_Attendance_All.csv", "text/csv");
+}
+
+async function exportSummaryCSV() {
+  const { data, error } = await supabaseClient
+    .from("student_attendance_summary")
+    .select("*")
+    .order("school_name")
+    .order("student_name");
+
+  if (error) {
+    alert("Summary export error: " + error.message);
+    return;
+  }
+
+  let csv = "SASID,Student Name,School,Attendance Records,Attendance Dates\n";
+
+  data.forEach(row => {
+    csv += [
+      row.sasid,
+      row.student_name,
+      row.school_name,
+      row.attendance_records,
+      row.attendance_dates
+    ].map(x => `"${x || ""}"`).join(",") + "\n";
+  });
+
+  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
 }
 
 async function importRosterCSV() {
@@ -406,14 +410,16 @@ async function importRosterCSV() {
 
     const fullName = `${firstName} ${lastName}`;
 
-    const { error } = await supabaseClient.from("students").insert({
-      sasid,
-      first_name: firstName,
-      last_name: lastName,
-      student_name: fullName,
-      school_id: school.id,
-      active: true
-    });
+    const { error } = await supabaseClient
+      .from("students")
+      .insert({
+        sasid: sasid,
+        first_name: firstName,
+        last_name: lastName,
+        student_name: fullName,
+        school_id: school.id,
+        active: true
+      });
 
     if (error) {
       skipped++;

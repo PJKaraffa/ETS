@@ -292,10 +292,12 @@ function exportWeekCSV() {
 }
 
 function setupWeeks() {
+  console.log("NEW setupWeeks loaded - Week 1 starts 6/29/2026");
+
   const weekSelect = document.getElementById("weekSelect");
   weekSelect.innerHTML = "";
 
-  const schoolYearEnd = new Date(2027, 5, 30); // June 30, 2027
+  const schoolYearEnd = new Date(2027, 5, 30);
 
   let monday = new Date(2026, 5, 29); // June 29, 2026
   let weekNumber = 1;
@@ -310,8 +312,7 @@ function setupWeeks() {
 
     const option = document.createElement("option");
     option.value = formatDate(monday);
-    option.textContent =
-      `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
 
     weekSelect.appendChild(option);
 
@@ -319,7 +320,6 @@ function setupWeeks() {
     weekNumber++;
   }
 }
-
 
 
 function formatDate(date) {

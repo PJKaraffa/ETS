@@ -6,8 +6,10 @@ const supabaseClient = supabase.createClient(
   SUPABASE_KEY,
   {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false
+      persistSession: true,
+      storage: window.sessionStorage,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
   }
 );

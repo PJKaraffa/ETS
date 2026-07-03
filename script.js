@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error || !data.session) {
-    window.location.replace("./login.html");
+    window.location.replace("./index.html");
     return;
   }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function logout() {
   await supabaseClient.auth.signOut();
-  window.location.replace("./login.html");
+  window.location.replace("./index.html");
 }
 
 async function loadSchools() {

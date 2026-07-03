@@ -357,25 +357,42 @@ function downloadFile(content, fileName, mimeType) {
 
   URL.revokeObjectURL(link.href);
 }
-async function exportSummaryCSV() {
+async function exportAllCSV() {
   const { data, error } = await supabaseClient
-    .from("student_attendance_summary")
-    .select("*");
+    .from("attendance")
+    .select(`
+      attendance_date,
+      code,
+      students (
+        sasid,
+        first_name,
+        last_name,
+        schools (
+          school_name
+        )
+      )
+    `)
+    .order("attendance_date");
 
   if (error) {
-    alert("Summary export error: " + error.message);
+    alert("Export All error: " + error.message);
     return;
   }
 
-  let csv = "Student Name,School,Attendance Records\n";
+  let csv = "SASID,First Name,Last Name,School,Attendance Date,Code\n";
 
   data.forEach(row => {
     csv += [
-      row.student_name,
-      row.school_name,
-      row.attendance_records
-    ].map(x => `"${x || ""}"`).join(",") + "\n";
+      row.students?.sasid || "",
+      row.students?.first_name || "",
+      row.students?.last_name || "",
+      row.students?.schools?.school_name || "",
+      row.attendance_date || "",
+      row.code || ""
+    ]
+      .map(x => `"${x}"`)
+      .join(",") + "\n";
   });
 
-  downloadFile(csv, "ETS_Attendance_Summary.csv", "text/csv");
+  downloadFile(csv, "ETS_Attendance_All.csv", "text/csv");
 }

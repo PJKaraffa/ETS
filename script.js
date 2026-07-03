@@ -292,33 +292,55 @@ function exportWeekCSV() {
 }
 
 function setupWeeks() {
-  const weekSelect = document.getElementById("weekSelect");
-  weekSelect.innerHTML = "";
 
-  const schoolYearStart = new Date(2026, 6, 1);
-  const schoolYearEnd = new Date(2027, 5, 30);
+    const weekSelect = document.getElementById("weekSelect");
+    weekSelect.innerHTML = "";
 
-  let monday = new Date(schoolYearStart);
+    const schoolYearStart = new Date(2026, 6, 1);   // July 1, 2026
+    const schoolYearEnd   = new Date(2027, 5, 30);  // June 30, 2027
 
-  while (monday.getDay() !== 1) {
-    monday.setDate(monday.getDate() + 1);
-  }
+    let weekNumber = 1;
 
-  let weekNumber = 1;
+    // ----- First partial week -----
+    let firstEnd = new Date(schoolYearStart);
 
-  while (monday <= schoolYearEnd) {
-    const friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
+    while (firstEnd.getDay() !== 5 && firstEnd <= schoolYearEnd) {
+        firstEnd.setDate(firstEnd.getDate() + 1);
+    }
 
-    const option = document.createElement("option");
-    option.value = formatDate(monday);
-    option.textContent = `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+    let option = document.createElement("option");
+    option.value = formatDate(schoolYearStart);
+    option.textContent =
+        `Week ${weekNumber}: ${shortDate(schoolYearStart)} - ${shortDate(firstEnd)}`;
 
     weekSelect.appendChild(option);
 
-    monday.setDate(monday.getDate() + 7);
     weekNumber++;
-  }
+
+    // ----- First Monday after July 1 -----
+    let monday = new Date(firstEnd);
+    monday.setDate(monday.getDate() + 3); // Friday -> Monday
+
+    // ----- Full Monday-Friday weeks -----
+    while (monday <= schoolYearEnd) {
+
+        let friday = new Date(monday);
+        friday.setDate(monday.getDate() + 4);
+
+        if (friday > schoolYearEnd)
+            friday = new Date(schoolYearEnd);
+
+        option = document.createElement("option");
+        option.value = formatDate(monday);
+        option.textContent =
+            `Week ${weekNumber}: ${shortDate(monday)} - ${shortDate(friday)}`;
+
+        weekSelect.appendChild(option);
+
+        monday.setDate(monday.getDate() + 7);
+        weekNumber++;
+    }
+}
 }
 
 function formatDate(date) {

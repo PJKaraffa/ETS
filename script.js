@@ -46,48 +46,59 @@ async function loadSchools() {
 }
 
 async function addStudent() {
+
   const sasid = document.getElementById("sasid").value.trim();
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
   const schoolId = document.getElementById("school").value;
 
   if (!sasid || !firstName || !lastName || !schoolId) {
-    alert("Enter SASID, First Name, Last Name, and School.");
+    alert("Please enter SASID, First Name, Last Name and School.");
     return;
   }
 
   const fullName = `${firstName} ${lastName}`;
 
- const { data, error } = await supabaseClient
-  .from("students")
-  .select(`
-      id,
-      sasid,
-      first_name,
-      last_name,
-      student_name,
-      school_id,
-      active,
-      schools (
-        school_name
-      )
-  `)
-  .eq("active", true)
-  .order("last_name", { ascending: true })
-  .order("first_name", { ascending: true });
+  // Optional: Check for duplicate SASID
+  const { data: existingStudent } = await supabaseClient
+    .from("students")
+    .select("id")
+    .eq("sasid", sasid)
+    .maybeSingle();
 
-  if (error) {
-    alert("Student insert error: " + error.message);
+  if (existingStudent) {
+    alert("A student with this SASID already exists.");
     return;
   }
 
+  // Insert new student
+  const { error } = await supabaseClient
+    .from("students")
+    .insert({
+      sasid: sasid,
+      first_name: firstName,
+      last_name: lastName,
+      student_name: fullName,
+      school_id: Number(schoolId),
+      active: true
+    });
+
+  if (error) {
+    alert("Unable to add student.\n\n" + error.message);
+    return;
+  }
+
+  // Clear entry boxes
   document.getElementById("sasid").value = "";
   document.getElementById("firstName").value = "";
   document.getElementById("lastName").value = "";
-  document.getElementById("school").value = "";
+  document.getElementById("school").selectedIndex = 0;
 
+  // Reload data
   await loadStudents();
   await loadAttendance();
+
+  alert("Student added successfully!");
 }
 
 async function loadStudents() {

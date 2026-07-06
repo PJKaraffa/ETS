@@ -117,7 +117,8 @@ async function loadStudents() {
       )
     `)
     .eq("active", true)
-    .order("last_name");
+.order("last_name", { ascending: true })
+.order("first_name", { ascending: true });
 
   if (error) {
     alert("Student load error: " + error.message);
